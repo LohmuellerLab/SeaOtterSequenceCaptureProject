@@ -1,0 +1,1 @@
+/u/flashscratch/a/ab08028/captures/aDNA-ModernComparison/bams/downsampledBams/downsample_Pairs/55_Elut_AK_AF3736.Mustela_putorius_furo.MusPutFur1.0.dna.toplevel.downsamp.rep.1.newSampName.realigned.bam

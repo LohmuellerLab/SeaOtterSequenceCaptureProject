@@ -1,0 +1,11 @@
+after you have gotten your SNP file through the bespoke filters with 20% missingness,
+do PCA and FASTRUCTURE and relatedness analyses to determine which individuals 
+you want to exclude due to admixture or being related.
+
+So use this snp file: 
+'snp_7_maxNoCallFrac_0.2_passingBespoke_passingAllFilters_postMerge_'${infile}
+for PCA analysis
+
+but when moving forward with filtering you are going to continue working with the 'all' file:
+'all_7_passingBespoke_maxNoCallFrac_0.9_rmBadIndividuals_passingFilters_'${infile}
+# because you don't want a stringent missingness filter going into the SFS
