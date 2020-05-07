@@ -7,7 +7,7 @@ Note: these scripts are internal to this project, based on my file systems and d
 Feel free to adapt and reuse in your own work with the caveat that they are not currently designed for generic use, so results are not guaranteed.
 
 ## data_processing
-	Scripts related to read mapping, genotype calling and filtering for modern and ancient data
+Scripts related to read mapping, genotype calling and filtering for modern and ancient data
 	* paleomixPipeline: maps reads (ancient and modern)
 
 	* variant_calling: find covered variants and call genotypes (GATK)
@@ -17,7 +17,7 @@ Feel free to adapt and reuse in your own work with the caveat that they are not 
 	* variant_calling_aDNA: call and filter aDNA variants and variants in 15 modern samples (3 from each population) for comparison
 	
 ## analyes
-	Scripts related to analyses
+Scripts related to analyses
 	* aDNA-ModernComparison: carry out PCA and structure analyses on ancient and modern data using genotype likelihoods
 	
 	* calculate_pi: calculate and plot pi and Watterson's Theta per popualtion from the neutral SFS for empirical and simluated data
