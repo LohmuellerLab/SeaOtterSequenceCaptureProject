@@ -1,0 +1,79 @@
+// set up a simple neutral simulation
+// two epoch model that simulates 100 x 1kb independent blocks
+// and uses the following variables
+// v_MU (mutation rate); v_R = recomb rate within blocks; v_NANC = ancestral size; v_NU = contraction size; 50K gen of burnin; 10gen contraction; v_OUTFILE = path to outfile ; v_SS = sample size in individuals for the vcf
+// added sea otter mutation rate 8.64e-09 (from genome paper)
+initialize() {
+	initializeMutationRate(v_MU);
+	// m1 mutation type: neutral
+	initializeMutationType("m1", 0.5, "f", 0.0);
+
+	// initialize 1kb block
+	initializeGenomicElementType("g1", m1, 1.0);
+	// a 100kb "chromosome" that's going to be made up of 100 independent 1kb blocks
+	// this represents a portion of my neutral sequence
+	initializeGenomicElement(g1, 0, 100000);
+
+// figured out a way for recomb to be 0.5 between blocks, but 1e-08 within blocks
+// so that they aren't actually linked; simulating 100 independent blocks
+	//initializeRecombinationRate(1e-8);
+	// this sets up rates that alternate between 1e-08 and 0.5
+	// and ends that are in pattern 999 1000 1999 2000 2999 ...
+	// so that the pattern is that r is 1e-8 for 0-999, then 0.5 between 999 and 1000 (independent block), then is 1e-8 through next block, and so on.
+	// making 5000 independent blocks.
+	rates=c(rep(c(v_R,0.5),100));
+	ends=NULL;
+	for (index in 0:99)
+	{
+	ends=c(ends,index*1000+999,index*1000+999+1);
+	}
+	initializeRecombinationRate(rates,ends);
+
+
+}
+
+// create a population of variable v_NANC individuals
+1 {
+	sim.addSubpop("p1", v_NANC);
+}
+
+// output generation number so I can track progress
+// I used to do it every eneration but that made too large output
+//late() {
+//cat(paste(c("generation:",sim.generation,"\n")));
+//}
+// now just do it every 10K
+10000 {
+	cat(paste(c("generation:",sim.generation,"\n")));
+	}
+20000 {
+	cat(paste(c("generation:",sim.generation,"\n")));
+	}
+30000 {
+	cat(paste(c("generation:",sim.generation,"\n")));
+	}
+40000 {
+	cat(paste(c("generation:",sim.generation,"\n")));
+	}
+	
+	
+// set burn in at 50K generations (>10*Ne of 4000); then shrink down to inferred pop size;
+
+
+50000 late() {
+	p1.outputVCFSample(v_SS, F,filePath=paste(c(v_OUTFILE,"/slim.output.preContraction.",chunk,".vcf"),sep=""));
+}
+
+// contract the population 1 gen after burn in:
+50001 {
+	p1.setSubpopulationSize(v_NU);
+	}
+
+// Tcollect VCF file and summary at the end of contraction 
+50036 late() {
+	p1.outputVCFSample(v_SS, F,filePath=paste(c(v_OUTFILE,"/slim.output.postContraction.",chunk,".vcf"),sep=""));
+}
+
+
+
+

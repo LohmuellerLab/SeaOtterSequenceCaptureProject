@@ -1,0 +1,6 @@
+population	ProjectionValueHaploids
+KUR	12
+CA	12
+COM	34
+AK	14
+AL	20
