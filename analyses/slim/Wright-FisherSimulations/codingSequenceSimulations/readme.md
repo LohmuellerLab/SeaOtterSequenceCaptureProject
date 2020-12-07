@@ -1,5 +1,7 @@
 This directory contains the models simulated using SLiM.
 
+All models are either h=0 (all mutations dominant), h=0.5 (all mutations additive), or an h-s relationship in which the most deleterious mutations are the most recesive (See STAR Methods for details). (Note the h-s models are in their own subdirectories within each model's directory.)
+
 Models:
 AK/1D.5Epoch: 5 Epoch model for Alaskan Population Parameters, with two consecutive contractions
 CA/1D.3Epoch:3 Epoch model for the California population parameters, with one contraction followed by a recovery period
