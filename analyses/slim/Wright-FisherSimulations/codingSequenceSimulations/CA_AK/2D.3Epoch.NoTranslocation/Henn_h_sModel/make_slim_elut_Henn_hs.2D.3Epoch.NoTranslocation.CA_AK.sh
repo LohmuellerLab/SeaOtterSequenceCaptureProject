@@ -1,5 +1,5 @@
 pop=CA_AK
-model=2D.3Epoch.Translocation.25for2Gen
+model=2D.3Epoch.NoTranslocation
 #model=1D.2Epoch.1.5Mb.cds.LongerContract
 gitdir=/u/home/p/pkalhori/project-klohmueldata/pooneh_data/github_repos/otter_exome/SLIM
 scriptdir=$gitdir/slim_scripts/$pop/$model
@@ -32,8 +32,8 @@ nrec_CA=1000
 ######### general parameters ; can set here or in command line ##########
 
 
-migAtoC=2.5e-2
-migCtoA=1e-2
+#migAtoC=1e-2
+#migCtoA=4e-3
 
 # Set g, number of genes (exons)
 g=1000
@@ -81,8 +81,8 @@ initialize() {
 	defineConstant("v_NU_AK",$nu_AK); // contraction size
 	defineConstant("v_NREC_AK",$nrec_AK); // contraction size
 	defineConstant("v_NCOMBO",$nanc_combo); // pre split time
-	defineConstant("migAK_CA",$migAtoC); // migration to CA from AK
-	defineConstant("migCA_AK",$migCtoA); // migration to AK from CA
+	//defineConstant("migAK_CA",$migAtoC); // migration to CA from AK
+	//defineConstant("migCA_AK",$migCtoA); // migration to AK from CA
 	
 
 	//cat("Exome portion length:"+seqLength+"\n");
@@ -117,15 +117,20 @@ initialize() {
 
 
 }
+
 1: fitness(m2) {
 h = (0.5)/(1 - 7071.07*(mut.selectionCoeff));
 //h = mut.mutationType.dominanceCoeff;
 if (homozygous) {
-	return ((1.0 + 0.5*mut.selectionCoeff)*(1.0 + 0.5*mut.selectionCoeff));
+    // 20210107: this was Bernard's code to deal with slight excess heterosis in his Plos Genet paper; we don't need this; initial set of revisions was run with this, but then we re-ran without it for final submission --> return ((1.0 + 0.5*mut.selectionCoeff)*(1.0 + 0.5*mut.selectionCoeff));
+    // 20210107: now am calculating homozgyous derived fitness the same as in the other simulations: 
+    return (1.0 + mut.selectionCoeff)
 } else {
 	return (1.0 + mut.selectionCoeff * h);
 }
 }
+
+
 // create a population of variable v_NANC individuals
 1 {
 	sim.addSubpop("p1", v_NCOMBO);
@@ -142,9 +147,9 @@ if (homozygous) {
 //Sample After burn in 
 
 ${t} late() {
-			// set up outfile: 
+	//set up output file
 	writeFile(paste(c(outdir,"/slim.output.",v_CHUNK,".summary.txt"),sep=""),"replicate,chunk,generation,mutid,type,s,age,originpop,subpop,numhet,numhom,popsizeDIP\n",append=F); // open fresh file
-	//file header
+		//file header
 	//mutation id
 	//mutation type
 	//selection coefficient
@@ -192,7 +197,7 @@ ${t} late() {
 		writeFile(paste(c(outdir,"/slim.output.",v_CHUNK,".summary.txt"),sep=""),paste(c(v_REP,v_CHUNK,generation,id,type,s,age,originpop,popID,pnumhet,pnumhom,popsize),sep=","),append=T);
 		}
 	}
-	}
+}
 //Burn in 50,000 generations, then split pops. Use CA params for p2 Resize p1 to the AK parameters
 $((${t} + 1))  early() {
 	sim.addSubpopSplit("p2",v_NANC_CA,p1);
@@ -329,7 +334,7 @@ $((${t} + 2+ ${tdiv} + ${tcontract})) late() {
 	p2.outputVCFSample(v_SS_CA, F,filePath=paste(c(outdir,"/slim.output.PreRecovery.p2.",v_CHUNK,".vcf"),sep=""));
 }
 
-//Recover populatoin sizes after (35) generations. 
+//Recover populatoin sizes after (35/25) generations. Tcontract is 35, but CA started 10 generations later
 
 $((${t} + 3+ ${tdiv} + ${tcontract})) late() {
 	p1.setSubpopulationSize(v_NREC_AK);
@@ -343,16 +348,10 @@ $((${t} + 3+ ${tdiv} + ${tcontract}+ ${trecovery})) late() {
 	p1.outputVCFSample(v_SS_AK, F,filePath=paste(c(outdir,"/slim.output.PreMigration.p1.",v_CHUNK,".vcf"),sep=""));
 	p2.outputVCFSample(v_SS_CA, F,filePath=paste(c(outdir,"/slim.output.PreMigration.p2.",v_CHUNK,".vcf"),sep=""));
 }
-$((${t} + 4 + ${tdiv} + ${tcontract}+ ${trecovery})) late() {
-		p1.setMigrationRates(c(p2), c(migCA_AK));
-		p2.setMigrationRates(c(p1), c(migAK_CA));
-		}
-
-//end migration 
-$((${t} + 6 + ${tdiv} + ${tcontract}+ ${trecovery})) late() {
-		p1.setMigrationRates(c(p2), c(0));
-		p2.setMigrationRates(c(p1), c(0));
-		}
+//$((${t} + 4 + ${tdiv} + ${tcontract}+ ${trecovery})) late() {
+		//p1.setMigrationRates(c(p2), c(migCA_AK));
+		//p2.setMigrationRates(c(p1), c(migAK_CA));
+		//}
 //Let the simulation run into the future, then sample at the ends
 $((${t} + 4+ ${tdiv} + ${tcontract}+ ${trecovery}+${tfuture})) late() {
 	p1.outputVCFSample(v_SS_AK, F,filePath=paste(c(outdir,"/slim.output.EndSimulation.p1.",v_CHUNK,".vcf"),sep=""));

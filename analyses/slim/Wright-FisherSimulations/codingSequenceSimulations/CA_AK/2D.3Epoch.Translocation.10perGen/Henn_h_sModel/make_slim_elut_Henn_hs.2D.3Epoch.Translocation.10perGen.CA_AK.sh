@@ -1,5 +1,5 @@
 pop=CA_AK
-model=2D.3Epoch.Translocation.25perGen
+model=2D.3Epoch.Translocation.10perGen
 #model=1D.2Epoch.1.5Mb.cds.LongerContract
 gitdir=/u/home/p/pkalhori/project-klohmueldata/pooneh_data/github_repos/otter_exome/SLIM
 scriptdir=$gitdir/slim_scripts/$pop/$model
@@ -32,8 +32,8 @@ nrec_CA=1000
 ######### general parameters ; can set here or in command line ##########
 
 
-migAtoC=2.5e-2
-migCtoA=1e-2
+migAtoC=1e-2
+migCtoA=4e-3
 
 # Set g, number of genes (exons)
 g=1000
@@ -121,11 +121,14 @@ initialize() {
 h = (0.5)/(1 - 7071.07*(mut.selectionCoeff));
 //h = mut.mutationType.dominanceCoeff;
 if (homozygous) {
-	return ((1.0 + 0.5*mut.selectionCoeff)*(1.0 + 0.5*mut.selectionCoeff));
+    // 20210107: this was Bernard's code to deal with slight excess heterosis in his Plos Genet paper; we don't need this; initial set of revisions was run with this, but then we re-ran without it for final submission --> return ((1.0 + 0.5*mut.selectionCoeff)*(1.0 + 0.5*mut.selectionCoeff));
+    // 20210107: now am calculating homozgyous derived fitness the same as in the other simulations: 
+    return (1.0 + mut.selectionCoeff)
 } else {
 	return (1.0 + mut.selectionCoeff * h);
 }
 }
+
 // create a population of variable v_NANC individuals
 1 {
 	sim.addSubpop("p1", v_NCOMBO);
