@@ -103,7 +103,7 @@ h = (0.5)/(1 - 7071.07*(mut.selectionCoeff));
 if (homozygous) {
     // 20210107: this was Bernard's code to deal with slight excess heterosis in his Plos Genet paper; we don't need this; initial set of revisions was run with this, but then we re-ran without it for final submission --> return ((1.0 + 0.5*mut.selectionCoeff)*(1.0 + 0.5*mut.selectionCoeff));
     // 20210107: now am calculating homozgyous derived fitness the same as in the other simulations: 
-    return (1.0 + mut.selectionCoeff)
+    return (1.0 + mut.selectionCoeff);
 } else {
 	return (1.0 + mut.selectionCoeff * h);
 }
