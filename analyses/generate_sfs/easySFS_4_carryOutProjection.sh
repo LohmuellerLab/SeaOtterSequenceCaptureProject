@@ -39,11 +39,11 @@ easySFS=$scriptdir/easySFS.abModified.3.noInteract.Exclude01Sites.HetFiltering.2
 # CA,AK,AL,COM,KUR 
 # choosing projections to maximize snps:
 #Choices based on 20181220 projection preview: 
-#AK – 14 (max)
-#AL – 20 (max)
-#CA – 12 (max would be at 8)
-#COM – 34 (max)
-#KUR – 12 (max would be at 10)
+#AK √ê 14 (max)
+#AL √ê 20 (max)
+#CA √ê 12 (max would be at 8)
+#COM √ê 34 (max)
+#KUR √ê 12 (max would be at 10)
 populations="CA,AK,AL,COM,KUR"
 projections="12,14,20,34,12" # haploids; updated these values on 20181220
 
@@ -107,5 +107,7 @@ mkdir -p $outdir
 #python $scriptdir/getMonomorphicProjectionCounts.py --vcf $vcfdir/cdsVCFs/${cdsVCF} --popMap $popFile --proj $projections --popIDs CA,AK,AL,COM,KUR --outdir $outdir
 python $scriptdir/getMonomorphicProjectionCounts.1D.2DSFS.py --vcf $vcfdir/cdsVCFs/${cdsVCF} --popMap $popFile --proj $projections --popIDs CA,AK,AL,COM,KUR --outdir $outdir
 
+######### add in monomorphic sites  with R script #######
+Rscript $scriptdir/easySFS_addInMonomorphicSites.R --dataDir $outdir --popFile $popFile --class neutral # will write them out in your data dir in new directories
 
 
